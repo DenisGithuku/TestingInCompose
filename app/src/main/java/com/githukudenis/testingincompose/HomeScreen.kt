@@ -45,7 +45,9 @@ fun HomeScreen(
 
 
     LazyColumn(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().semantics {
+            contentDescription = "Version list"
+        },
     ) {
         item {
             CenterAlignedTopAppBar(
