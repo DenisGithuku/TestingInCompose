@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.githukudenis.testingincompose.views.AboutScreen
 import com.githukudenis.testingincompose.views.details.VersionDetails
 import com.githukudenis.testingincompose.views.home.HomeScreen
 
@@ -37,6 +38,11 @@ fun AppNavigator(
             )
         ) {
             VersionDetails()
+        }
+        composable(
+            route = "about"
+        ) {
+            AboutScreen()
         }
     }
 }
