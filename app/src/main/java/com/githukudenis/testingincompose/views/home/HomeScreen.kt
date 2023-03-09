@@ -1,5 +1,6 @@
-package com.githukudenis.testingincompose
+package com.githukudenis.testingincompose.views.home
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -16,25 +17,25 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -43,11 +44,26 @@ fun HomeScreen(
     onOpenItem: (Long) -> Unit
 ) {
 
+    val homeViewModel: HomeViewModel = hiltViewModel()
+    val state = homeViewModel.state.value
+
+    if (state.isLoading) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
 
     LazyColumn(
-        modifier = modifier.fillMaxSize().semantics {
-            contentDescription = "Version list"
-        },
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .semantics {
+                contentDescription = "Version list"
+            },
     ) {
         item {
             CenterAlignedTopAppBar(
@@ -59,7 +75,7 @@ fun HomeScreen(
             )
         }
         items(
-            items = androidVersions,
+            items = state.versions,
         ) {
             Row(
                 modifier = modifier
@@ -79,7 +95,7 @@ fun HomeScreen(
             ) {
                 Box(modifier = modifier
                     .size(60.dp)
-                    .clip(CircleShape)
+                    .clip(RoundedCornerShape(20.dp))
                     .background(color = Color.LightGray)
                     .padding(20.dp),
                     contentAlignment = Alignment.Center
@@ -106,7 +122,10 @@ fun HomeScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
+    device = "spec:width=411dp,height=891dp"
+)
 @Composable
 fun HomeScreenPreview() {
     HomeScreen {
